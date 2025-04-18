@@ -230,3 +230,23 @@ INSERT INTO DETALLE (Venta_ID, Producto_ID, PrecioUnitario, Cantidad) VALUES
 (5, 12, 38, 6); -- QUESO MANCHEGO LA PASTORA
 GO
 
+INSERT INTO USUARIO (Nombre, Clave_Hash, Email, Estado) VALUES 
+('mgarcia', CONVERT(VARCHAR(256), HASHBYTES('SHA2_256', 'Empresa#123'), 2), 'moises.garcia@empresa.com', 1),
+('rlopez', CONVERT(VARCHAR(256), HASHBYTES('SHA2_256', 'rlopez123'), 2), 'rodrigo.lopez@empresa.com', 1),
+('amartinez', CONVERT(VARCHAR(256), HASHBYTES('SHA2_256', 'Ana2024'), 2), 'ana.martinez@empresa.com', 1);
+GO
+
+INSERT INTO ROL (Nombre) VALUES 
+('Administrador'),
+('Gerente'),
+('Vendedor');
+GO
+
+INSERT INTO USUARIO_ROL (UsuarioID, RolID) VALUES 
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 2),
+(2, 3),
+(3, 2);
+GO

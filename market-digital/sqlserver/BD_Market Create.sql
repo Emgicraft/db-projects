@@ -56,3 +56,28 @@ CREATE TABLE DETALLE (
 );
 GO
 
+CREATE TABLE USUARIO (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+	Nombre VARCHAR(250) UNIQUE NOT NULL,
+	Clave_Hash VARCHAR(256) NOT NULL,
+	Email VARCHAR(100) UNIQUE,
+	FechaCreacion DATETIME DEFAULT GETDATE(), -- Fecha y Hora en que se creó
+	FechaActualizacion DATETIME DEFAULT GETDATE(), -- Fecha y Hora de su última actualización
+	Estado BIT NOT NULL -- 0: Deshabilitado y 1: Habilitado
+);
+GO
+
+CREATE TABLE ROL (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+	Nombre VARCHAR(250) UNIQUE NOT NULL
+);
+GO
+
+CREATE TABLE USUARIO_ROL (
+    UsuarioID INT,
+	RolID INT,
+	PRIMARY KEY (UsuarioID, RolID),
+	CONSTRAINT FK_Usuario_Rol FOREIGN KEY (UsuarioID) REFERENCES USUARIO(ID),
+	CONSTRAINT FK_Rol_Usuario FOREIGN KEY (RolID) REFERENCES ROL(ID)
+);
+GO
