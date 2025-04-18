@@ -79,3 +79,21 @@ INSERT INTO Libro (Titulo, Autor, Anio_publicacion, Resumen, NumPaginas, Editori
 ('Historia del arte', 'H. W. Janson', 1962, 'Historia completa del arte desde la prehistoria hasta el presente.', 896, 'Harry N. Abrams', 5),
 ('El arte de amar', 'Erich Fromm', 1956, 'Reflexiones sobre el amor y las relaciones humanas.', 384, 'Harper & Row', 5),
 ('El arte de la felicidad', 'Dalai Lama y Howard Cutler', 1998, 'Reflexiones sobre la felicidad y el bienestar.', 368, 'Riverhead Books', 5);
+
+-- Insertar usuarios
+INSERT INTO USUARIO (Nombre, Clave_Hash, Email, Estado) VALUES 
+('mgarcia', UPPER(SHA2('Empresa#123', 256)), 'moises.garcia@empresa.com', 1),
+('rlopez', UPPER(SHA2('rlopez123', 256)), 'rodrigo.lopez@empresa.com', 1),
+('amartinez', UPPER(SHA2('Ana2024', 256)), 'ana.martinez@empresa.com', 1);
+
+-- Insertar roles
+INSERT INTO ROL (Nombre) VALUES 
+('Administrador'),
+('Gerente'),
+('Vendedor');
+
+-- Asignar roles
+INSERT INTO USUARIO_ROL (UsuarioID, RolID) VALUES 
+(1, 1), (1, 2), (1, 3),
+(2, 2), (2, 3),
+(3, 2);
