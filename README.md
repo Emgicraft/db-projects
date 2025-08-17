@@ -12,13 +12,15 @@ Este repositorio contiene una colección organizada de scripts SQL desarrollados
 - Versiones adaptadas para distintos motores (MySQL, SQL Server).
 
 ## 📁 Estructura del repositorio
+```txt
 db-projects/
 ├── biblioteca-digital/
-│ ├── mysql/
-│ └── sqlserver/
+│   ├── mysql/
+│   └── sqlserver/
 ├── market-digital/
-│ ├── mysql/
-│ └── sqlserver/
+│   ├── mysql/
+│   └── sqlserver/
+```
 
 ## ⚠️ Licencia
 
