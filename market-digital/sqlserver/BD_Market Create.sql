@@ -6,9 +6,60 @@ GO
 USE BD_Market;
 GO
 
+-- Crear tabla CATEGORIA
+CREATE TABLE CATEGORIA (
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL
+);
+GO
+
+-- Crear tabla PRODUCTO
+CREATE TABLE PRODUCTO (
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
+    Codigo_inventario VARCHAR(12),
+    Descripcion VARCHAR(200) NOT NULL,
+    Categoria_ID INT,
+    Precio DECIMAL(11, 2) NOT NULL,
+    Stock INT CONSTRAINT DF_Producto_Stock DEFAULT(0),
+    CONSTRAINT FK_Producto_Categoria FOREIGN KEY (Categoria_ID) REFERENCES CATEGORIA(ID) ON DELETE SET NULL,
+    CONSTRAINT CK_Producto_Stock CHECK (Stock >= 0)
+);
+GO
+
+-- Crear tabla PRODUCTO_IMAGEN
+CREATE TABLE PRODUCTO_IMAGEN (
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
+    Producto_ID INT NOT NULL,
+
+    -- Almacenamiento flexible:
+    Imagen VARBINARY(MAX),       -- contenido binario (opción A)
+    ImagenUrl VARCHAR(500),      -- ruta/URL (opción B)
+    ContentType VARCHAR(100),
+    NombreArchivo VARCHAR(260),
+
+    EsPrincipal BIT NOT NULL CONSTRAINT DF_ProdImg_Principal DEFAULT(0),
+    Orden SMALLINT NOT NULL CONSTRAINT DF_ProdImg_Orden DEFAULT(0),
+    CreadoEn DATETIME NOT NULL CONSTRAINT DF_ProdImg_CreadoEn DEFAULT GETDATE(),
+    ModificadoEn DATETIME NULL,
+
+    -- Relaciones y restricciones
+    CONSTRAINT FK_ProductoImagen_Producto FOREIGN KEY (Producto_ID) REFERENCES PRODUCTO(ID) ON DELETE CASCADE,
+
+    -- Debe existir al menos Imagen BINARIA o una URL
+    CONSTRAINT CK_ProdImg_AlMenosUno CHECK ( (Imagen IS NOT NULL) OR (LEN(ISNULL(ImagenUrl, '')) > 0) )
+);
+GO
+
+-- Solo una imágen principal por producto
+CREATE UNIQUE INDEX UIX_ProdImg_Principal ON PRODUCTO_IMAGEN (Producto_ID) WHERE EsPrincipal = 1;
+GO
+-- Índice de navegación por producto y orden
+CREATE INDEX IX_ProdImg_Producto_Orden ON PRODUCTO_IMAGEN (Producto_ID, Orden);
+GO
+
 -- Crear tabla CLIENTE
 CREATE TABLE CLIENTE (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     NumRuc VARCHAR(12),
     Direccion VARCHAR(100),
@@ -18,29 +69,10 @@ GO
 
 -- Crear tabla VENTA
 CREATE TABLE VENTA (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
     Cliente_ID INT,
     Fecha DATETIME NOT NULL,
     CONSTRAINT FK_Venta_Cliente FOREIGN KEY (Cliente_ID) REFERENCES CLIENTE(ID) ON DELETE SET NULL
-);
-GO
-
--- Crear tabla CATEGORIA
-CREATE TABLE CATEGORIA (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL
-);
-GO
-
--- Crear tabla PRODUCTO
-CREATE TABLE PRODUCTO (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Codigo_inventario VARCHAR(12),
-    Descripcion VARCHAR(100) NOT NULL,
-    Categoria_ID INT,
-    Precio DECIMAL(11,2) NOT NULL,
-    Stock INT DEFAULT 0 CHECK (Stock >= 0),
-    CONSTRAINT FK_Producto_Categoria FOREIGN KEY (Categoria_ID) REFERENCES CATEGORIA(ID) ON DELETE SET NULL
 );
 GO
 
@@ -48,7 +80,7 @@ GO
 CREATE TABLE DETALLE (
     Venta_ID INT NOT NULL,
     Producto_ID INT NOT NULL,
-    PrecioUnitario DECIMAL(11,2) NOT NULL,
+    PrecioUnitario DECIMAL(11, 2) NOT NULL,
     Cantidad INT CHECK (Cantidad > 0),
     PRIMARY KEY (Venta_ID, Producto_ID),
     CONSTRAINT FK_Detalle_Venta FOREIGN KEY (Venta_ID) REFERENCES VENTA(ID) ON DELETE CASCADE,
@@ -56,8 +88,9 @@ CREATE TABLE DETALLE (
 );
 GO
 
+-- Crear tabla USUARIO
 CREATE TABLE USUARIO (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
 	Nombre VARCHAR(250) UNIQUE NOT NULL,
 	Clave_Hash VARCHAR(256) NOT NULL,
 	Email VARCHAR(100) UNIQUE,
@@ -67,12 +100,14 @@ CREATE TABLE USUARIO (
 );
 GO
 
+-- Crear tabla ROL
 CREATE TABLE ROL (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
+    ID INT IDENTITY(1, 1) PRIMARY KEY,
 	Nombre VARCHAR(250) UNIQUE NOT NULL
 );
 GO
 
+-- Crear tabla USUARIO_ROL
 CREATE TABLE USUARIO_ROL (
     UsuarioID INT,
 	RolID INT,
