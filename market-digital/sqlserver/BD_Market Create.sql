@@ -8,7 +8,7 @@ GO
 
 -- Crear tabla CATEGORIA
 CREATE TABLE CATEGORIA (
-    ID INT IDENTITY(1, 1) PRIMARY KEY,
+    ID SMALLINT IDENTITY(1, 1) PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL
 );
 GO
@@ -18,7 +18,7 @@ CREATE TABLE PRODUCTO (
     ID INT IDENTITY(1, 1) PRIMARY KEY,
     Codigo_inventario VARCHAR(12),
     Descripcion VARCHAR(200) NOT NULL,
-    Categoria_ID INT,
+    Categoria_ID SMALLINT,
     Precio DECIMAL(11, 2) NOT NULL,
     Stock INT CONSTRAINT DF_Producto_Stock DEFAULT(0),
     CONSTRAINT FK_Producto_Categoria FOREIGN KEY (Categoria_ID) REFERENCES CATEGORIA(ID) ON DELETE SET NULL,
@@ -37,10 +37,10 @@ CREATE TABLE PRODUCTO_IMAGEN (
     ContentType VARCHAR(100),
     NombreArchivo VARCHAR(260),
 
-    EsPrincipal BIT NOT NULL CONSTRAINT DF_ProdImg_Principal DEFAULT(0),
-    Orden SMALLINT NOT NULL CONSTRAINT DF_ProdImg_Orden DEFAULT(0),
-    CreadoEn DATETIME NOT NULL CONSTRAINT DF_ProdImg_CreadoEn DEFAULT GETDATE(),
-    ModificadoEn DATETIME NULL,
+    EsPrincipal BIT NOT NULL CONSTRAINT DF_ProdImg_Principal DEFAULT(0),	-- 0: NO y 1: SI
+    Orden SMALLINT NOT NULL CONSTRAINT DF_ProdImg_Orden DEFAULT(0),			-- Es básicamente un indice
+    FechaCreacion DATETIME NOT NULL CONSTRAINT DF_ProdImg_Creacion DEFAULT GETDATE(),
+    FechaModificado DATETIME CONSTRAINT DF_ProdImg_Modificado DEFAULT GETDATE(),
 
     -- Relaciones y restricciones
     CONSTRAINT FK_ProductoImagen_Producto FOREIGN KEY (Producto_ID) REFERENCES PRODUCTO(ID) ON DELETE CASCADE,
@@ -91,26 +91,26 @@ GO
 -- Crear tabla USUARIO
 CREATE TABLE USUARIO (
     ID INT IDENTITY(1, 1) PRIMARY KEY,
-	Nombre VARCHAR(250) UNIQUE NOT NULL,
+	Nombre VARCHAR(100) UNIQUE NOT NULL,
 	Clave_Hash VARCHAR(256) NOT NULL,
 	Email VARCHAR(100) UNIQUE,
-	FechaCreacion DATETIME DEFAULT GETDATE(), -- Fecha y Hora en que se creó
-	FechaActualizacion DATETIME DEFAULT GETDATE(), -- Fecha y Hora de su última actualización
-	Estado BIT NOT NULL -- 0: Deshabilitado y 1: Habilitado
+	FechaCreacion DATETIME NOT NULL DEFAULT GETDATE(), -- Fecha y Hora en que se creó
+	FechaModificado DATETIME DEFAULT GETDATE(), -- Fecha y Hora de su última actualización
+	Estado BIT NOT NULL DEFAULT 0 -- 0: Deshabilitado y 1: Habilitado
 );
 GO
 
 -- Crear tabla ROL
 CREATE TABLE ROL (
-    ID INT IDENTITY(1, 1) PRIMARY KEY,
-	Nombre VARCHAR(250) UNIQUE NOT NULL
+    ID SMALLINT IDENTITY(1, 1) PRIMARY KEY,
+	Nombre VARCHAR(100) UNIQUE NOT NULL
 );
 GO
 
 -- Crear tabla USUARIO_ROL
 CREATE TABLE USUARIO_ROL (
     UsuarioID INT,
-	RolID INT,
+	RolID SMALLINT,
 	PRIMARY KEY (UsuarioID, RolID),
 	CONSTRAINT FK_Usuario_Rol FOREIGN KEY (UsuarioID) REFERENCES USUARIO(ID),
 	CONSTRAINT FK_Rol_Usuario FOREIGN KEY (RolID) REFERENCES ROL(ID)
