@@ -3,6 +3,33 @@ SET NAMES utf8mb4;
 USE BD_Market;
 
 -- =====================================
+-- SP: Buscar producto por ID
+-- =====================================
+DROP PROCEDURE IF EXISTS SP_BuscarProductoPorID;
+
+DELIMITER $$
+CREATE PROCEDURE SP_BuscarProductoPorID (
+    IN ProductoID INT
+)
+BEGIN
+    SELECT 
+        p.ID,
+        p.Codigo_inventario,
+        p.Descripcion,
+        c.ID    AS CategoriaID,
+        c.Nombre AS CategoriaNombre,
+        p.Precio,
+        p.Stock
+    FROM PRODUCTO AS p
+    INNER JOIN CATEGORIA AS c ON p.Categoria_ID = c.ID
+    WHERE p.ID = ProductoID;
+END $$
+DELIMITER ;
+
+-- Ejemplo de ejecución
+CALL SP_BuscarProductoPorID(1);
+
+-- =====================================
 -- SP: Buscar productos por descripción
 -- =====================================
 DROP PROCEDURE IF EXISTS SP_BuscarProductoPorDescripcion;
@@ -16,6 +43,7 @@ BEGIN
         p.ID,
         p.Codigo_inventario,
         p.Descripcion,
+        c.ID AS CategoriaID,
         c.Nombre AS CategoriaNombre,
         p.Precio,
         p.Stock
@@ -27,6 +55,31 @@ DELIMITER ;
 
 -- Ejecución
 CALL SP_BuscarProductoPorDescripcion('salsa');
+
+-- =====================================
+-- SP: Obtener todos los productos
+-- =====================================
+DROP PROCEDURE IF EXISTS SP_ObtenerTodosProductos;
+
+DELIMITER $$
+CREATE PROCEDURE SP_ObtenerTodosProductos()
+BEGIN
+    SELECT 
+        p.ID,
+        p.Codigo_inventario,
+        p.Descripcion,
+        c.ID    AS CategoriaID,
+        c.Nombre AS CategoriaNombre,
+        p.Precio,
+        p.Stock
+    FROM PRODUCTO AS p
+    INNER JOIN CATEGORIA AS c ON p.Categoria_ID = c.ID
+    ORDER BY p.Descripcion;
+END $$
+DELIMITER ;
+
+-- Ejemplo
+CALL SP_ObtenerTodosProductos();
 
 -- =====================================
 -- SP: Validar usuario (usuario/contraseña)
